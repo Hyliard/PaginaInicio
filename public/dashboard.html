@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hyliard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/images/Gaming Logo.png" alt="Hyliard Logo">
+        </div>
+        <nav>
+            <a href="/logout">Cerrar Sesión</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="dashboard-section">
+            <h1>Bienvenido al Dashboard</h1>
+            <p>Aquí puedes ver tus datos y realizar acciones personalizadas.</p>
+            <div class="user-info">
+                <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                <p><strong>Email:</strong> <span id="user-email"></span></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Hyliard. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Obtener el token del localStorage
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            console.log("No hay token, redirigiendo a /"); // Depuración
+            window.location.href = "/"; // Redirigir si no hay token
+        } else {
+            console.log("Token encontrado:", token); // Depuración
+        }
+
+        // Obtener los datos del usuario
+        fetch("/user", {
+            headers: {
+                "Authorization": token, // Enviar el token en el encabezado
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Error en la respuesta:", response.status); // Depuración
+                    throw new Error("Error obteniendo datos del usuario");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("user-name").textContent = data.name;
+                document.getElementById("user-email").textContent = data.email;
+            })
+            .catch(error => {
+                console.error("Error obteniendo datos del usuario:", error);
+                window.location.href = "/"; // Redirigir si hay un error
+            });
+    </script>
+    </body>
+</html>
